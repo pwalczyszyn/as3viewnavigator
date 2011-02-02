@@ -1,1 +1,17 @@
-To use it just instantiate AmfMessageDeserializer class and use its deserialize function to get AmfPacket object based on an array of AMF bytes.
+To use it just instantiate new ViewNavigator passing your application sprite as constructor parameter.
+Next you have following functions available:
+
+public function pushView(view:Sprite):void;
+
+public function popView():void;
+
+public function popToFirstView():void;
+
+public function popAll():void;
+
+public function replaceView(view:Sprite):void;
+
+public function get poppedViewReturnedObject():Object;
+
+public function get length():int;
+
