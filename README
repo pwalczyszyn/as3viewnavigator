@@ -1,0 +1,1 @@
+To use it just instantiate AmfMessageDeserializer class and use its deserialize function to get AmfPacket object based on an array of AMF bytes.
