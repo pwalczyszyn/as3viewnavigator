@@ -23,6 +23,7 @@ package com.riaspace.as3viewnavigator
 {
 	import caurina.transitions.Tweener;
 	
+	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
 
@@ -58,7 +59,7 @@ package com.riaspace.as3viewnavigator
 
 		protected function stage_resizeHandler(event:Event):void
 		{
-			for each(var view:Sprite in views)
+			for each(var view:DisplayObject in views)
 			{
 				view.width = parent.stage.stageWidth;
 				view.height = parent.stage.stageHeight; 
@@ -66,17 +67,21 @@ package com.riaspace.as3viewnavigator
 		}
 
 		/**
-		 * Adds view container on top of the stack. 
+		 * Adds view on top of the stack. 
 		 * 
 		 * If added view implements IView interface it will also inject the reference to
 		 * this navigator instance.
 		 * 
 		 * @see com.riaspace.as3viewnavigator.IView
 		 * 
-		 * @param view - Sprite to add
+		 * @param view - instance or Class of the view to add. It must inherit from DisplayObject at some point.
 		 */
-		public function pushView(view:Sprite):void
+		public function pushView(view:Object):Object
 		{
+			// If view is a Class instantiating it
+			if (view is Class)
+				view = new view();
+			
 			// if pushed view is an IView setting navigator reference
 			if (view is IView)
 				IView(view).navigator = this;
@@ -94,7 +99,7 @@ package com.riaspace.as3viewnavigator
 			view.y = 0;
 			
 			// Adding view to the parent
-			parent.addChild(view);
+			parent.addChild(DisplayObject(view));
 			
 			var currentView:Sprite;
 			if (views.length > 0)
@@ -118,16 +123,16 @@ package com.riaspace.as3viewnavigator
 				});
 			// Adding current view to the stack
 			views.push(view);
+			
+			// Returnin pushed view
+			return view;
 		}
 		
 		/**
 		 * Pops current view from the top of the stack.
 		 */
-		public function popView():void
+		public function popView():Object
 		{
-			// Getting width of the stage
-			var stageWidth:Number = parent.stage.stageWidth;
-
 			var currentView:Sprite;
 			if (views.length > 0)
 			{
@@ -139,6 +144,9 @@ package com.riaspace.as3viewnavigator
 				if (views.length > 1)
 					belowView = views[views.length - 2];
 				
+				// Getting width of the stage
+				var stageWidth:Number = parent.stage.stageWidth;
+
 				// Tweening currentView to the right outside the screen
 				Tweener.addTween(currentView, 
 					{
@@ -146,9 +154,12 @@ package com.riaspace.as3viewnavigator
 						time : transitionTime, 
 						onComplete:function():void
 						{
+							// Removing top view from the stack
 							views.pop();
+							// Removing view from parent
 							parent.removeChild(currentView);
 							
+							// Getting popped view return object
 							if (currentView is IView)
 								_poppedViewReturnedObject = 
 									IView(currentView).viewReturnObject;
@@ -164,6 +175,9 @@ package com.riaspace.as3viewnavigator
 					Tweener.addTween(belowView, {x : 0, time : transitionTime});
 				}
 			}
+			
+			// Returning popped view
+			return currentView;
 		}
 		
 		/**
@@ -196,13 +210,17 @@ package com.riaspace.as3viewnavigator
 		/**
 		 * Replaces view with the one passed as parameter.
 		 * 
-		 * @param view - new view.
+		 * @param view - instance or Class of the view to replace. It must inherit from DisplayObject at some point.
 		 */
-		public function replaceView(view:Sprite):void
+		public function replaceView(view:Object):Object
 		{
-			pushView(view);
+			// Pushing view on top of the stack
+			view = pushView(view);
+			// Removing view below
 			if (views.length > 1)
 				views.splice(views.length - 2, 1);
+			// Returning pushed view
+			return view;
 		}
 		
 		/**
