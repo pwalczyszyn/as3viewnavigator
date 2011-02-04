@@ -130,6 +130,8 @@ package com.riaspace.as3viewnavigator
 		
 		/**
 		 * Pops current view from the top of the stack.
+		 * 
+		 * @return Returns the view that was on top of the stack. 
 		 */
 		public function popView():Object
 		{
@@ -182,9 +184,12 @@ package com.riaspace.as3viewnavigator
 		
 		/**
 		 * Pops to the first view from the very top.
+		 * 
+		 * @return Returns the view that was on top of the stack.
 		 */
-		public function popToFirstView():void
+		public function popToFirstView():Object
 		{
+			var topView:Object;
 			if (views.length > 1)
 			{
 				// Removing views except the bottom and the top one
@@ -192,25 +197,30 @@ package com.riaspace.as3viewnavigator
 					views.splice(1, views.length - 2);
 				
 				// Poping top view to have nice transition
-				popView();
+				topView = popView();
 			}
+			return topView;
 		}
 		
 		/**
 		 * Pops all views from the stack.
+		 * 
+		 * @return Returns the view that was on top of the stack.
 		 */
-		public function popAll():void
+		public function popAll():Object
 		{
 			// Removing views except the top one
 			views.splice(0, views.length - 1);
 			// Poping top view to have nice transition
-			popView();
+			return popView();
 		}
 		
 		/**
 		 * Replaces view with the one passed as parameter.
 		 * 
 		 * @param view - instance or Class of the view to replace. It must inherit from DisplayObject at some point.
+		 * 
+		 * @return Returns the view that was on top of the stack.
 		 */
 		public function replaceView(view:Object):Object
 		{
@@ -224,7 +234,7 @@ package com.riaspace.as3viewnavigator
 		}
 		
 		/**
-		 * Returns object value returned by popped view. 
+		 * Returns object value returned by popped view. If multiple views were popped it is a value of the one that was on top.
 		 * View has to implement IView interface in order to have this value returned.
 		 */
 		public function get poppedViewReturnedObject():Object
