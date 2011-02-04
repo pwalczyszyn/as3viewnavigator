@@ -3,6 +3,7 @@
   <includeClasses>
     <classEntry path="com.riaspace.as3viewnavigator.ViewNavigator"/>
     <classEntry path="com.riaspace.as3viewnavigator.IView"/>
+    <classEntry path="com.riaspace.as3viewnavigator.ViewTransition"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

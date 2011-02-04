@@ -43,14 +43,23 @@ package com.riaspace.as3viewnavigator
 		public var transitionTime:Number = 0.5;
 		
 		/**
-		 * ViewNavigator constructor, it accepts one parameter with a parent sprite.
+		 * ViewNavigator constructor.
 		 * 
-		 * @param parent - parent application sprite.
+		 * @param parent - parent application Sprite.
+		 * @param firstView - instance or Class of the view to add. It must inherit from DisplayObject at some point.
+		 * @param firstViewProps - associative array of properties and values to set on the view. Especially usefull if 
+		 * view is passed as Class.
+		 * @param firstViewContext - object that can be passed to the view if it implements IView. It also will be returned
+		 * by ViewNavigator's poppedViewContext property no matter if the view implements IView or not.
+		 * @param transition - enum value from <code>ViewTransition</code> class. Constructor by default has it is set to <code>ViewTransition.NONE</code>.
 		 */
-		public function ViewNavigator(parent:Sprite)
+		public function ViewNavigator(parent:Sprite, firstView:Object = null, firstViewProps:Object = null, firstViewContext:Object = null, transition:String = "none")
 		{
 			this.parent = parent;
 			parent.addEventListener(Event.ADDED_TO_STAGE, parent_addedToStageHandler);
+			
+			if (firstView)
+				pushView(firstView, firstViewProps, firstViewContext, transition);
 		}
 		
 		protected function parent_addedToStageHandler(event:Event):void
@@ -67,7 +76,7 @@ package com.riaspace.as3viewnavigator
 				viewRef.view.height = parent.stage.stageHeight; 
 			}
 		}
-
+		
 		/**
 		 * Adds view on top of the stack. 
 		 * 
@@ -81,10 +90,11 @@ package com.riaspace.as3viewnavigator
 		 * view is passed as Class.
 		 * @param context - object that can be passed to the view if it implements IView. It also will be returned
 		 * by ViewNavigator's poppedViewContext property no matter if the view implements IView or not.
+		 * @param transition - enum value from <code>ViewTransition</code> class. By default it is set to <code>ViewTransition.SLIDE</code>.
 		 * 
 		 * @return Returns pushed view.
 		 */
-		public function pushView(view:Object, viewProps:Object = null, context:Object = null):DisplayObject
+		public function pushView(view:Object, viewProps:Object = null, context:Object = null, transition:String = "slide"):DisplayObject
 		{
 			var dispObj:DisplayObject;
 			
@@ -125,27 +135,36 @@ package com.riaspace.as3viewnavigator
 			if (views.length > 0)
 			{
 				// Getting current view from the stack
-				currentView = views[views.length - 1]
-				// Tweening currentView to the right outside the screen
-				Tweener.addTween(currentView.view, {x : -stageWidth, time : transitionTime});
+				currentView = views[views.length - 1];
+				
+				if (transition == ViewTransition.SLIDE)
+					// Tweening currentView to the right outside the screen
+					Tweener.addTween(currentView.view, {x : -stageWidth, time : transitionTime});
 			}
 			
-			// Tweening added view
-			Tweener.addTween(dispObj, 
-				{
-					x : 0, 
-					time : transitionTime, 
-					onComplete:function():void
+			if (transition == ViewTransition.SLIDE)
+			{
+				// Tweening added view
+				Tweener.addTween(dispObj, 
 					{
-						if (currentView)
-							parent.removeChild(currentView.view);
-					}
-				});
+						x : 0, 
+						time : transitionTime, 
+						onComplete:function():void
+						{
+							if (currentView)
+								parent.removeChild(currentView.view);
+						}
+					});
+			}
+			else
+			{
+				if (currentView)
+					parent.removeChild(currentView.view);
+				dispObj.x = 0;
+			}
 			
-			// Creating new ViewReference
-			var viewRef:ViewReference = new ViewReference(dispObj, context);
 			// Adding current view to the stack
-			views.push(viewRef);
+			views.push(new ViewReference(dispObj, context));
 			
 			// Returning pushed view
 			return dispObj;
@@ -154,9 +173,11 @@ package com.riaspace.as3viewnavigator
 		/**
 		 * Pops current view from the top of the stack.
 		 * 
+		 * @param transition - enum value from <code>ViewTransition</code> class. By default it is set to <code>ViewTransition.SLIDE</code>.
+		 *  
 		 * @return Returns the view that was on top of the stack. 
 		 */
-		public function popView():DisplayObject
+		public function popView(transition:String = "slide"):DisplayObject
 		{
 			var currentView:ViewReference;
 			if (views.length > 0)
@@ -172,38 +193,41 @@ package com.riaspace.as3viewnavigator
 				// Getting width of the stage
 				var stageWidth:Number = parent.stage.stageWidth;
 
-				// Tweening currentView to the right outside the screen
-				Tweener.addTween(currentView.view, 
+				var removeCurrentFunction:Function = 
+					function():void
 					{
-						x : stageWidth, 
-						time : transitionTime, 
-						onComplete:function():void
-						{
-							// Removing top view from the stack
-							views.pop();
-							// Removing view from parent
-							parent.removeChild(currentView.view);
-							
-							// Setting context of popped view
-							_poppedViewContext = currentView.context;
-							
-							// Getting popped view return object
-							if (currentView is IView)
-								_poppedViewReturnedObject = 
-									IView(currentView.view).viewReturnObject;
-							else
-								_poppedViewReturnedObject = null;
-						}
-					});
+						// Removing top view from the stack
+						views.pop();
+						// Removing view from parent
+						parent.removeChild(currentView.view);
+						
+						// Setting context of popped view
+						_poppedViewContext = currentView.context;
+						
+						// Getting popped view return object
+						if (currentView is IView)
+							_poppedViewReturnedObject = 
+								IView(currentView.view).viewReturnObject;
+						else
+							_poppedViewReturnedObject = null;
+					};
 				
-				// Tweening view from below
+				if (transition == ViewTransition.SLIDE)
+					// Tweening currentView to the right outside the screen
+					Tweener.addTween(currentView.view, {x : stageWidth, time : transitionTime, onComplete : removeCurrentFunction});
+				else
+					removeCurrentFunction();
+				
 				if (belowView)
 				{
 					parent.addChild(belowView.view);
-					Tweener.addTween(belowView.view, {x : 0, time : transitionTime});
+					if (transition == ViewTransition.SLIDE)
+						// Tweening view from below
+						Tweener.addTween(belowView.view, {x : 0, time : transitionTime});
+					else
+						belowView.view.x = 0;
 				}
 			}
-			
 			// Returning popped view
 			return currentView.view;
 		}
@@ -211,10 +235,11 @@ package com.riaspace.as3viewnavigator
 		/**
 		 * Pops to the first view from the very top.
 		 * 
+		 * @param transition - enum value from <code>ViewTransition</code> class. By default it is set to <code>ViewTransition.SLIDE</code>.
+		 *  
 		 * @return Returns the view that was on top of the stack.
-		 * 
 		 */
-		public function popToFirstView():DisplayObject
+		public function popToFirstView(transition:String = "slide"):DisplayObject
 		{
 			var topView:DisplayObject;
 			if (views.length > 1)
@@ -224,7 +249,7 @@ package com.riaspace.as3viewnavigator
 					views.splice(1, views.length - 2);
 				
 				// Poping top view to have nice transition
-				topView = popView();
+				topView = popView(transition);
 			}
 			return topView;
 		}
@@ -232,15 +257,17 @@ package com.riaspace.as3viewnavigator
 		/**
 		 * Pops all views from the stack.
 		 * 
+		 * @param transition - enum value from <code>ViewTransition</code> class. By default it is set to <code>ViewTransition.SLIDE</code>.
+		 *  
 		 * @return Returns the view that was on top of the stack.
 		 */
-		public function popAll():DisplayObject
+		public function popAll(transition:String = "slide"):DisplayObject
 		{
 			// Removing views except the top one
 			views.splice(0, views.length - 1);
 			
 			// Poping top view to have nice transition
-			return popView();
+			return popView(transition);
 		}
 		
 		/**
@@ -251,13 +278,14 @@ package com.riaspace.as3viewnavigator
 		 * view is passed as Class.
 		 * @param context - object that can be passed to the view if it implements IView. It also will be returned
 		 * by ViewNavigator's poppedViewContext property no matter if the view implements IView or not.
-		 * 
+		 * @param transition - enum value from <code>ViewTransition</code> class. By default it is set to <code>ViewTransition.SLIDE</code>.
+		 *  
 		 * @return Returns the view that was on top of the stack.
 		 */
-		public function replaceView(view:Object, viewProps:Object = null, context:Object = null):DisplayObject
+		public function replaceView(view:Object, viewProps:Object = null, context:Object = null, transition:String = "slide"):DisplayObject
 		{
 			// Pushing view on top of the stack
-			var dispObj:DisplayObject = pushView(view, viewProps, context);
+			var dispObj:DisplayObject = pushView(view, viewProps, context, transition);
 			
 			// Removing view below
 			if (views.length > 1)
@@ -284,6 +312,10 @@ package com.riaspace.as3viewnavigator
 			return views.length;
 		}
 
+		/**
+		 * Returns context object returned by popped view. If multiple views were popped it is a value of the one that was on top.
+		 * View doesn't have to implement IView interface in order to have this value returned.
+		 */
 		public function get poppedViewContext():Object
 		{
 			return _poppedViewContext;
