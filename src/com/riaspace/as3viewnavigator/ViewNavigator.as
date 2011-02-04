@@ -31,9 +31,11 @@ package com.riaspace.as3viewnavigator
 	{
 		protected var parent:Sprite;
 		
-		protected var views:Vector.<Sprite> = new Vector.<Sprite>;
+		protected var views:Vector.<ViewReference> = new Vector.<ViewReference>;
 		
 		protected var _poppedViewReturnedObject:Object;
+		
+		private var _poppedViewContext:Object;
 		
 		/**
 		 * Views transition duration, default value is 0.5s.
@@ -59,10 +61,10 @@ package com.riaspace.as3viewnavigator
 
 		protected function stage_resizeHandler(event:Event):void
 		{
-			for each(var view:DisplayObject in views)
+			for each(var viewRef:ViewReference in views)
 			{
-				view.width = parent.stage.stageWidth;
-				view.height = parent.stage.stageHeight; 
+				viewRef.view.width = parent.stage.stageWidth;
+				viewRef.view.height = parent.stage.stageHeight; 
 			}
 		}
 
@@ -75,8 +77,14 @@ package com.riaspace.as3viewnavigator
 		 * @see com.riaspace.as3viewnavigator.IView
 		 * 
 		 * @param view - instance or Class of the view to add. It must inherit from DisplayObject at some point.
+		 * @param viewProps - associative array of properties and values to set on the view. Especially usefull if 
+		 * view is passed as Class.
+		 * @param context - object that can be passed to the view if it implements IView. It also will be returned
+		 * by ViewNavigator's poppedViewContext property no matter if the view implements IView or not.
+		 * 
+		 * @return Returns pushed view.
 		 */
-		public function pushView(view:Object):Object
+		public function pushView(view:Object, viewProps:Object = null, context:Object = null):Object
 		{
 			// If view is a Class instantiating it
 			if (view is Class)
@@ -84,7 +92,15 @@ package com.riaspace.as3viewnavigator
 			
 			// if pushed view is an IView setting navigator reference
 			if (view is IView)
+			{
 				IView(view).navigator = this;
+				IView(view).context = context;
+			}
+			
+			// Setting view properties
+			for(var prop:String in viewProps)
+				if (view.hasOwnProperty(prop))
+					view[prop] = viewProps[prop];
 			
 			// Setting size of the added view
 			view.width = parent.stage.stageWidth; 
@@ -101,13 +117,13 @@ package com.riaspace.as3viewnavigator
 			// Adding view to the parent
 			parent.addChild(DisplayObject(view));
 			
-			var currentView:Sprite;
+			var currentView:ViewReference;
 			if (views.length > 0)
 			{
 				// Getting current view from the stack
 				currentView = views[views.length - 1]
 				// Tweening currentView to the right outside the screen
-				Tweener.addTween(currentView, {x : -stageWidth, time : transitionTime});
+				Tweener.addTween(currentView.view, {x : -stageWidth, time : transitionTime});
 			}
 			
 			// Tweening added view
@@ -118,13 +134,16 @@ package com.riaspace.as3viewnavigator
 					onComplete:function():void
 					{
 						if (currentView)
-							parent.removeChild(currentView);
+							parent.removeChild(currentView.view);
 					}
 				});
-			// Adding current view to the stack
-			views.push(view);
 			
-			// Returnin pushed view
+			// Creating new ViewReference
+			var viewRef:ViewReference = new ViewReference(DisplayObject(view), context);
+			// Adding current view to the stack
+			views.push(viewRef);
+			
+			// Returning pushed view
 			return view;
 		}
 		
@@ -135,14 +154,14 @@ package com.riaspace.as3viewnavigator
 		 */
 		public function popView():Object
 		{
-			var currentView:Sprite;
+			var currentView:ViewReference;
 			if (views.length > 0)
 			{
 				// Getting current view from the stack
 				currentView = views[views.length - 1];
 				
 				// Getting below view
-				var belowView:Sprite;
+				var belowView:ViewReference;
 				if (views.length > 1)
 					belowView = views[views.length - 2];
 				
@@ -150,7 +169,7 @@ package com.riaspace.as3viewnavigator
 				var stageWidth:Number = parent.stage.stageWidth;
 
 				// Tweening currentView to the right outside the screen
-				Tweener.addTween(currentView, 
+				Tweener.addTween(currentView.view, 
 					{
 						x : stageWidth, 
 						time : transitionTime, 
@@ -159,12 +178,15 @@ package com.riaspace.as3viewnavigator
 							// Removing top view from the stack
 							views.pop();
 							// Removing view from parent
-							parent.removeChild(currentView);
+							parent.removeChild(currentView.view);
+							
+							// Setting context of popped view
+							_poppedViewContext = currentView.context;
 							
 							// Getting popped view return object
 							if (currentView is IView)
 								_poppedViewReturnedObject = 
-									IView(currentView).viewReturnObject;
+									IView(currentView.view).viewReturnObject;
 							else
 								_poppedViewReturnedObject = null;
 						}
@@ -173,19 +195,20 @@ package com.riaspace.as3viewnavigator
 				// Tweening view from below
 				if (belowView)
 				{
-					parent.addChild(belowView);
-					Tweener.addTween(belowView, {x : 0, time : transitionTime});
+					parent.addChild(belowView.view);
+					Tweener.addTween(belowView.view, {x : 0, time : transitionTime});
 				}
 			}
 			
 			// Returning popped view
-			return currentView;
+			return currentView.view;
 		}
 		
 		/**
 		 * Pops to the first view from the very top.
 		 * 
 		 * @return Returns the view that was on top of the stack.
+		 * 
 		 */
 		public function popToFirstView():Object
 		{
@@ -218,14 +241,18 @@ package com.riaspace.as3viewnavigator
 		/**
 		 * Replaces view with the one passed as parameter.
 		 * 
-		 * @param view - instance or Class of the view to replace. It must inherit from DisplayObject at some point.
+		 * @param view - instance or Class of the view to add. It must inherit from DisplayObject at some point.
+		 * @param viewProps - associative array of properties and values to set on the view. Especially usefull if 
+		 * view is passed as Class.
+		 * @param context - object that can be passed to the view if it implements IView. It also will be returned
+		 * by ViewNavigator's poppedViewContext property no matter if the view implements IView or not.
 		 * 
 		 * @return Returns the view that was on top of the stack.
 		 */
-		public function replaceView(view:Object):Object
+		public function replaceView(view:Object, viewProps:Object = null, context:Object = null):Object
 		{
 			// Pushing view on top of the stack
-			view = pushView(view);
+			view = pushView(view, viewProps, context);
 			// Removing view below
 			if (views.length > 1)
 				views.splice(views.length - 2, 1);
@@ -249,5 +276,23 @@ package com.riaspace.as3viewnavigator
 		{
 			return views.length;
 		}
+
+		public function get poppedViewContext():Object
+		{
+			return _poppedViewContext;
+		}
+
+	}
+}
+import flash.display.DisplayObject;
+
+internal class ViewReference
+{
+	public var view:DisplayObject;
+	public var context:Object;
+	public function ViewReference(view:DisplayObject, context:Object)
+	{
+		this.view = view;
+		this.context = context;
 	}
 }

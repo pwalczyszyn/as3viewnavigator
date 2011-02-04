@@ -26,6 +26,9 @@ package com.riaspace.as3viewnavigator
 		function get navigator():ViewNavigator;
 		function set navigator(value:ViewNavigator):void;
 		
+		function get context():Object;
+		function set context(value:Object):void;
+		
 		function get viewReturnObject():Object;
 	}
 }
