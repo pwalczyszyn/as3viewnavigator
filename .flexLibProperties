@@ -4,6 +4,7 @@
     <classEntry path="com.riaspace.as3viewnavigator.ViewNavigator"/>
     <classEntry path="com.riaspace.as3viewnavigator.IView"/>
     <classEntry path="com.riaspace.as3viewnavigator.ViewTransition"/>
+    <classEntry path="com.riaspace.as3viewnavigator.IResizable"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

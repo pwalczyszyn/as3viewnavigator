@@ -71,10 +71,8 @@ package com.riaspace.as3viewnavigator
 		protected function stage_resizeHandler(event:Event):void
 		{
 			for each(var viewRef:ViewReference in views)
-			{
-				viewRef.view.width = parent.stage.stageWidth;
-				viewRef.view.height = parent.stage.stageHeight; 
-			}
+				if (viewRef.view is IResizable)
+					IResizable(viewRef.view).resize();
 		}
 		
 		/**
@@ -116,10 +114,6 @@ package com.riaspace.as3viewnavigator
 				if (dispObj.hasOwnProperty(prop))
 					dispObj[prop] = viewProps[prop];
 			
-			// Setting size of the added view
-			dispObj.width = parent.stage.stageWidth; 
-			dispObj.height = parent.stage.stageHeight;
-			
 			// Getting width of the stage
 			var stageWidth:Number = parent.stage.stageWidth;
 			
@@ -128,9 +122,12 @@ package com.riaspace.as3viewnavigator
 			// Setting y to the top of the screen
 			dispObj.y = 0;
 			
+			if (dispObj is IResizable)
+				IResizable(dispObj).resize();
+			
 			// Adding view to the parent
 			parent.addChild(dispObj);
-			
+
 			var currentView:ViewReference;
 			if (views.length > 0)
 			{
@@ -141,7 +138,7 @@ package com.riaspace.as3viewnavigator
 					// Tweening currentView to the right outside the screen
 					Tweener.addTween(currentView.view, {x : -stageWidth, time : transitionTime});
 			}
-			
+
 			if (transition == ViewTransition.SLIDE)
 			{
 				// Tweening added view
