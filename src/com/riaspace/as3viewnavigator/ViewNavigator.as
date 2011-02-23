@@ -1,22 +1,19 @@
 //////////////////////////////////////////////////////////////////////////////////////
 //
-//	Copyright 2011 Piotr Walczyszyn
+//	Copyright 2011 Piotr Walczyszyn (http://riaspace.com | @pwalczyszyn)
 //	
-//	This file is part of as3viewnavigator.
-//
-//	as3viewnavigator is free software: you can redistribute it and/or modify
-//	it under the terms of the GNU Lesser General Public License as published by
-//	the Free Software Foundation, either version 3 of the License, or
-//	(at your option) any later version.
+//	Licensed under the Apache License, Version 2.0 (the "License");
+//	you may not use this file except in compliance with the License.
+//	You may obtain a copy of the License at
 //	
-//	as3viewnavigator is distributed in the hope that it will be useful,
-//	but WITHOUT ANY WARRANTY; without even the implied warranty of
-//	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//	GNU General Public License for more details.
+//		http://www.apache.org/licenses/LICENSE-2.0
 //	
-//	You should have received a copy of the GNU Lesser General Public License
-//	along with as3viewnavigator.  If not, see <http://www.gnu.org/licenses/>.
-//
+//	Unless required by applicable law or agreed to in writing, software
+//	distributed under the License is distributed on an "AS IS" BASIS,
+//	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//	See the License for the specific language governing permissions and
+//	limitations under the License.
+//	
 //////////////////////////////////////////////////////////////////////////////////////
 
 package com.riaspace.as3viewnavigator
@@ -71,8 +68,8 @@ package com.riaspace.as3viewnavigator
 		protected function stage_resizeHandler(event:Event):void
 		{
 			for each(var viewRef:ViewReference in views)
-				if (viewRef.view is IResizable)
-					IResizable(viewRef.view).resize();
+				if (viewRef.view is IView)
+					IView(viewRef.view).resize();
 		}
 		
 		/**
@@ -105,6 +102,8 @@ package com.riaspace.as3viewnavigator
 			// if pushed view is an IView setting navigator reference
 			if (dispObj is IView)
 			{
+				IView(dispObj).resize();
+				
 				IView(dispObj).navigator = this;
 				IView(dispObj).context = context;
 			}
@@ -121,9 +120,6 @@ package com.riaspace.as3viewnavigator
 			dispObj.x = stageWidth;
 			// Setting y to the top of the screen
 			dispObj.y = 0;
-			
-			if (dispObj is IResizable)
-				IResizable(dispObj).resize();
 			
 			// Adding view to the parent
 			parent.addChild(dispObj);
