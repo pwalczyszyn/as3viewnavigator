@@ -162,6 +162,6 @@ package com.riaspace.as3viewnavigator
 		/**
 		 * Returns top view from the stack
 		 */
-		function get currentView():Object;
+		function get currentView():DisplayObject;
 	}
 }

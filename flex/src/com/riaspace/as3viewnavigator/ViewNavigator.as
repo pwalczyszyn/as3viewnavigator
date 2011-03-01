@@ -58,7 +58,7 @@ package com.riaspace.as3viewnavigator
 			// Setting new scrollRect dimensions to clip the content
 			scrollRect = new Rectangle(0, 0, width, height);
 			// Resizing currently active view
-			_base.resizeActiveView();
+			_base.resizeCurrentView();
 		}
 		
 		//--------------------------------------------------------------------------
@@ -193,7 +193,7 @@ package com.riaspace.as3viewnavigator
 		/**
 		 * @inheritDoc
 		 */
-		public function get currentView():Object
+		public function get currentView():DisplayObject
 		{
 			return _base.currentView;
 		}

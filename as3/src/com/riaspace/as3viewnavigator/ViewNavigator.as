@@ -106,7 +106,7 @@ package com.riaspace.as3viewnavigator
 			scrollRect = new Rectangle(0, 0, width, height);
 			
 			// Resizing active view
-			_base.resizeActiveView();
+			_base.resizeCurrentView();
 		}
 				
 		/**
@@ -290,7 +290,7 @@ package com.riaspace.as3viewnavigator
 		/**
 		 * @inheritDoc
 		 */
-		public function get currentView():Object
+		public function get currentView():DisplayObject
 		{
 			return _base.currentView;
 		}
