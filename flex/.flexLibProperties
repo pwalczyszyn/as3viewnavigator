@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexLibProperties includeAllClasses="true" useMultiPlatformConfig="false" version="3">
+  <includeClasses>
+    <classEntry path="com.riaspace.as3viewnavigator.ViewNavigator"/>
+    <classEntry path="com.riaspace.as3viewnavigator.View"/>
+  </includeClasses>
+  <includeResources/>
+  <namespaceManifests>
+    <namespaceManifestEntry manifest="manifest.xml" namespace="http://ns.riaspace.com/navigator"/>
+  </namespaceManifests>
+</flexLibProperties>

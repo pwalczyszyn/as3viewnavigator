@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<componentPackage>
+	<component id="View" class="com.riaspace.as3viewnavigator.View" />
+	<component id="ViewNavigator" class="com.riaspace.as3viewnavigator.ViewNavigator" />
+</componentPackage>

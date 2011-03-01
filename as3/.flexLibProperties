@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<flexLibProperties includeAllClasses="true" version="3">
+<flexLibProperties includeAllClasses="true" useMultiPlatformConfig="false" version="3">
   <includeClasses>
     <classEntry path="com.riaspace.as3viewnavigator.ViewNavigator"/>
     <classEntry path="com.riaspace.as3viewnavigator.IView"/>
     <classEntry path="com.riaspace.as3viewnavigator.ViewTransition"/>
+    <classEntry path="com.riaspace.as3viewnavigator.IViewNavigator"/>
+    <classEntry path="com.riaspace.as3viewnavigator.ViewNavigatorBase"/>
+    <classEntry path="com.riaspace.as3viewnavigator.ViewReference"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

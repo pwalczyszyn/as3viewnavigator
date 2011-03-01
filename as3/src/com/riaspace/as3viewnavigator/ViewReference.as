@@ -18,16 +18,16 @@
 
 package com.riaspace.as3viewnavigator
 {
-	public interface IView
+	import flash.display.DisplayObject;
+	
+	internal class ViewReference
 	{
-		function resize():void;
-		
-		function get navigator():ViewNavigator;
-		function set navigator(value:ViewNavigator):void;
-		
-		function get context():Object;
-		function set context(value:Object):void;
-		
-		function get viewReturnObject():Object;
+		public var view:DisplayObject;
+		public var context:Object;
+		public function ViewReference(view:DisplayObject, context:Object)
+		{
+			this.view = view;
+			this.context = context;
+		}
 	}
 }
