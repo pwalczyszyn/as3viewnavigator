@@ -77,7 +77,7 @@ package com.riaspace.as3viewnavigator
 		}
 		
 		/**
-		 * Returning top view from the stack
+		 * Returns top view from the stack
 		 */
 		public function get currentView():Object
 		{

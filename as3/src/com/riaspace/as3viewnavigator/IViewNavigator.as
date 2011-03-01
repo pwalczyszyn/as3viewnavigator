@@ -157,6 +157,11 @@ package com.riaspace.as3viewnavigator
 		/**
 		 * Returns number of views managed by ViewNavigator container.
 		 */
-		function get length():Number;
+		function get length():Number;		
+		
+		/**
+		 * Returns top view from the stack
+		 */
+		function get currentView():Object;
 	}
 }

@@ -189,5 +189,13 @@ package com.riaspace.as3viewnavigator
 		{
 			return _base.length;
 		}
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function get currentView():Object
+		{
+			return _base.currentView;
+		}
 	}
 }
