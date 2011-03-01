@@ -82,23 +82,67 @@ package com.riaspace.as3viewnavigator
 		 */
 		function replaceView(view:Object, viewProps:Object = null, context:Object = null, transition:String = "slide"):DisplayObject;
 		
+		/**
+		 * Returns width of navigator container.
+		 */
 		function get width():Number;
+		/**
+		 * Sets width of navigator container. 
+		 * 
+		 * @param width Width of ViewNavigator 
+		 */
 		function set width(value:Number):void;
-		
+
+		/**
+		 * Returns height of navigator container.
+		 */
 		function get height():Number;
+		/**
+		 * Sets height of navigator container. 
+		 * 
+		 * @param width Width of ViewNavigator 
+		 */
 		function set height(value:Number):void;
 		
-		
+		/**
+		 * Returns first view that will be display when navigator
+		 * is constructed.
+		 */
 		function get firstView():Object;
+		/**
+		 * Sets first view object.
+		 * @param value - first view object
+		 */
 		function set firstView(value:Object):void;
 		
+		/**
+		 * Returns first view properties.
+		 */
 		function get firstViewProps():Object;
+		/**
+		 * Sets first view properties.
+		 * @param value - first view properties object
+		 */
 		function set firstViewProps(value:Object):void;
-		
+
+		/**
+		 * Returns first view context.
+		 */
 		function get firstViewContext():Object;
+		/**
+		 * Sets first view context object.
+		 * @param value - first view context object
+		 */
 		function set firstViewContext(value:Object):void;
 		
+		/**
+		 * Returns first view transition.
+		 */
 		function get firstViewTransition():String;
+		/**
+		 * Sets first view transition.
+		 * @param value - first view transition
+		 */
 		function set firstViewTransition(value:String):void;
 		
 		/**
@@ -110,5 +154,9 @@ package com.riaspace.as3viewnavigator
 		 */
 		function set transitionDuration(value:Number):void;
 
+		/**
+		 * Returns number of views managed by ViewNavigator container.
+		 */
+		function get length():Number;
 	}
 }

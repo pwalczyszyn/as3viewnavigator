@@ -24,7 +24,12 @@ package com.riaspace.as3viewnavigator
 	import flash.geom.Rectangle;
 
 	/**
-	 * This is a wrapper class for ViewNavigatorBase. It can used for pure AS3/Flash projects.
+	 * Dispatched when changing the current view.
+	 */
+	[Event(name="viewChanging", type="com.riaspace.as3viewnavigator.events.ViewNavigatorEvent")]
+	
+	/**
+	 * This is a wrapper class for ViewNavigatorBase. It can be used for pure AS3/Flash projects.
 	 * Also Flex version is available in a separate swc.
 	 * 
 	 * @author Piotr Walczyszyn
@@ -153,9 +158,11 @@ package com.riaspace.as3viewnavigator
 			setSize(_width, value);
 		}
 		
-		////////////////////////////////////////////////////////////////////////////
+		//--------------------------------------------------------------------------
+		//
 		// IViewNavigator functions implementation
-		////////////////////////////////////////////////////////////////////////////
+		//
+		//--------------------------------------------------------------------------
 		
 		/**
 		 * @inheritDoc
@@ -178,7 +185,7 @@ package com.riaspace.as3viewnavigator
 		 */
 		public function popView(transition:String="slide"):DisplayObject
 		{
-			return _base.popView(transition);
+			return _base.public::popView(transition);
 		}
 		
 		/**
@@ -186,7 +193,7 @@ package com.riaspace.as3viewnavigator
 		 */
 		public function pushView(view:Object, viewProps:Object=null, context:Object=null, transition:String="slide"):DisplayObject
 		{
-			return _base.pushView(view, viewProps, context, transition);
+			return _base.public::pushView(view, viewProps, context, transition);
 		}
 		
 		/**
@@ -270,6 +277,14 @@ package com.riaspace.as3viewnavigator
 		public function set transitionDuration(value:Number):void
 		{
 			_base.transitionDuration = value;
-		}		
+		}	
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function get length():Number
+		{
+			return _base.length;
+		}
 	}	
 }

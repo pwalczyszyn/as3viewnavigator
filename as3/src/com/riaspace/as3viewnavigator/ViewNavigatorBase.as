@@ -20,9 +20,13 @@ package com.riaspace.as3viewnavigator
 {
 	import caurina.transitions.Tweener;
 	
+	import com.riaspace.as3viewnavigator.events.ViewNavigatorEvent;
+	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	
+	use namespace vn_internal;
 	
 	/**
 	 * Base class for ViewNavigator.
@@ -49,6 +53,8 @@ package com.riaspace.as3viewnavigator
 		
 		protected var _transitionDuration:Number = 0.5;
 		
+		protected var _currentViewReference:ViewReference;
+		
 		public function ViewNavigatorBase(parent:Sprite, firstView:Object = null, firstViewProps:Object = null, firstViewContext:Object = null, firstViewTransition:String = "none")
 		{
 			_parent = parent;
@@ -67,55 +73,64 @@ package com.riaspace.as3viewnavigator
 			
 			// If first view was defined pushing it
 			if (_firstView)
-				pushView(_firstView, _firstViewProps, _firstViewContext, _firstViewTransition);
+				public::pushView(_firstView, _firstViewProps, _firstViewContext, _firstViewTransition);
 		}
 		
 		/**
 		 * Returning top view from the stack
 		 */
-		public function get activeView():ViewReference
+		public function get currentView():Object
 		{
-			return _views.length > 0 ? _views[_views.length - 1] : null;
+			return _views.length > 0 ? _currentViewReference.instance : null;
 		}
 		
 		internal function resizeActiveView():void
 		{
-			var av:ViewReference = activeView;
-			if (av && av.view && av.view is IView)
-				IView(av.view).resize();
+			var av:Object = currentView;
+			if (av && av is IView)
+				IView(av).resize();
 		}
 
 		public function pushView(view:Object, viewProps:Object = null, context:Object = null, transition:String = "slide"):DisplayObject
 		{
-			var dispObj:DisplayObject;
+			if (_parent.dispatchEvent(new ViewNavigatorEvent(ViewNavigatorEvent.VIEW_CHANGING, ViewNavigatorAction.PUSH, currentView, view)))
+				// Returning pushed view
+				return vn_internal::pushView(view, viewProps, context, transition);
+			
+			return null;
+		}
+		
+		vn_internal function pushView(view:Object, viewProps:Object = null, context:Object = null, transition:String = "slide"):DisplayObject
+		{
+			var targetView:DisplayObject;
 			
 			// If view is a Class instantiating it
 			if (view is Class)
-				dispObj = new view();
+				targetView = new view();
 			else
-				dispObj = DisplayObject(view);
+				targetView = DisplayObject(view);
 			
 			// if pushed view is an IView setting navigator reference
-			if (dispObj is IView)
+			if (targetView is IView)
 			{
-				IView(dispObj).navigator = ViewNavigator(_parent);
-				IView(dispObj).context = context;
+				IView(targetView).navigator = ViewNavigator(_parent);
+				IView(targetView).context = context;
 				
-				IView(dispObj).resize();
+				IView(targetView).resize();
 			}
 			
 			// Setting view properties
 			for(var prop:String in viewProps)
-				if (dispObj.hasOwnProperty(prop))
-					dispObj[prop] = viewProps[prop];
+				if (targetView.hasOwnProperty(prop))
+					targetView[prop] = viewProps[prop];
 			
 			// Setting x position to the right outside the screen
-			dispObj.x = _parent.width;
+			targetView.x = _parent.width;
 			// Setting y to the top of the screen
-			dispObj.y = 0;
+			targetView.y = 0;
 			
 			// Adding view to the parent
-			_parent.addChild(dispObj);
+			_parent.addChild(targetView);
 			
 			var currentView:ViewReference;
 			if (_views.length > 0)
@@ -125,90 +140,115 @@ package com.riaspace.as3viewnavigator
 				
 				if (transition == ViewTransition.SLIDE)
 					// Tweening currentView to the right outside the screen
-					Tweener.addTween(currentView.view, {x : -_parent.width, time : transitionDuration});
+					Tweener.addTween(_currentViewReference.instance, {x : -_parent.width, time : transitionDuration});
 			}
+			
+			var addCurrentFunction:Function =
+				function():void
+				{
+					if (_currentViewReference)
+						_parent.removeChild(_currentViewReference.instance);
+
+					// Adding current view to the stack
+					_currentViewReference = new ViewReference(targetView, viewProps, context); 
+					_views.push(_currentViewReference);
+				};
 			
 			if (transition == ViewTransition.SLIDE)
 			{
 				// Tweening added view
-				Tweener.addTween(dispObj, 
+				Tweener.addTween(targetView, 
 					{
 						x : 0, 
 						time : transitionDuration, 
-						onComplete:function():void
-						{
-							if (currentView)
-								_parent.removeChild(currentView.view);
-						}
+						onComplete : addCurrentFunction
 					});
 			}
 			else
 			{
-				if (currentView)
-					_parent.removeChild(currentView.view);
-				dispObj.x = 0;
+				addCurrentFunction();
+				targetView.x = 0;
 			}
 			
-			// Adding current view to the stack
-			_views.push(new ViewReference(dispObj, context));
-			
 			// Returning pushed view
-			return dispObj;
+			return targetView;
 		}
 		
 		public function popView(transition:String = "slide"):DisplayObject
 		{
-			var currentView:ViewReference;
+			var poppedView:DisplayObject;
+			
 			if (_views.length > 0)
 			{
-				// Getting current view from the stack
-				currentView = _views[_views.length - 1];
-				
-				// Getting below view
-				var belowView:ViewReference;
+				var targetView:Object;
 				if (_views.length > 1)
-					belowView = _views[_views.length - 2];
-				
-				var removeCurrentFunction:Function = 
-					function():void
-					{
-						// Removing top view from the stack
-						_views.pop();
-						// Removing view from parent
-						_parent.removeChild(currentView.view);
-						
-						// Setting context of popped view
-						_poppedViewContext = currentView.context;
-						
-						// Getting popped view return object
-						if (currentView is IView)
-							_poppedViewReturnedObject = 
-								IView(currentView.view).viewReturnObject;
-						else
-							_poppedViewReturnedObject = null;
-					};
-				
-				if (transition == ViewTransition.SLIDE)
-					// Tweening currentView to the right outside the screen
-					Tweener.addTween(currentView.view, {x : _parent.width, time : transitionDuration, onComplete : removeCurrentFunction});
-				else
-					removeCurrentFunction();
-				
-				if (belowView)
-				{
-					if (belowView.view is IView)
-						IView(belowView.view).resize();
-					
-					_parent.addChild(belowView.view);
-					if (transition == ViewTransition.SLIDE)
-						// Tweening view from below
-						Tweener.addTween(belowView.view, {x : 0, time : transitionDuration});
-					else
-						belowView.view.x = 0;
-				}
+					targetView = _views[_views.length - 2].instance;
+	
+				if (_parent.dispatchEvent(new ViewNavigatorEvent(ViewNavigatorEvent.VIEW_CHANGING, ViewNavigatorAction.POP, currentView, targetView)))
+					poppedView = vn_internal::popView(transition);
 			}
+			
+			return poppedView;
+		}
+		
+		vn_internal function popView(transition:String = "slide"):DisplayObject
+		{
+			var poppedViewReference:ViewReference = _currentViewReference;
+			
+			// Getting below view
+			var targetViewReference:ViewReference;
+			if (_views.length > 1)
+				targetViewReference = _views[_views.length - 2];
+			
+			var removeCurrentFunction:Function = 
+				function():void
+				{
+					// Removing top view from the stack
+					_views.pop();
+					// Removing view from parent
+					_parent.removeChild(poppedViewReference.instance);
+					
+					// Setting context of popped view
+					_poppedViewContext = poppedViewReference.context;
+					
+					// Getting popped view return object
+					if (poppedViewReference.instance is IView)
+						_poppedViewReturnedObject = 
+							IView(poppedViewReference.instance).viewReturnObject;
+					else
+						_poppedViewReturnedObject = null;
+				};
+			
+			if (transition == ViewTransition.SLIDE)
+				// Tweening currentView to the right outside the screen
+				Tweener.addTween(poppedViewReference.instance, 
+					{
+						x : _parent.width, 
+						time : transitionDuration, 
+						onComplete : removeCurrentFunction
+					});
+			else
+				removeCurrentFunction();
+			
+			// If popped view is not the last one
+			if (targetViewReference)
+			{
+				if (targetViewReference.instance is IView)
+					IView(targetViewReference.instance).resize();
+				
+				_parent.addChild(targetViewReference.instance);
+				if (transition == ViewTransition.SLIDE)
+					// Tweening view from below
+					Tweener.addTween(targetViewReference.instance, {x : 0, time : transitionDuration});
+				else
+					targetViewReference.instance.x = 0;
+			}
+			
+			// Setting current view to target view
+			_currentViewReference = targetViewReference;
+			
 			// Returning popped view
-			return currentView.view;
+			return poppedViewReference.instance;
 		}
 		
 		public function popToFirstView(transition:String = "slide"):DisplayObject
@@ -216,36 +256,47 @@ package com.riaspace.as3viewnavigator
 			var topView:DisplayObject;
 			if (_views.length > 1)
 			{
+				var targetView:Object = _views[0].instance;
+				if (!_parent.dispatchEvent(new ViewNavigatorEvent(ViewNavigatorEvent.VIEW_CHANGING, ViewNavigatorAction.POP_TO_FIRST, currentView, targetView)))
+					return null;
+				
 				// Removing views except the bottom and the top one
 				if (_views.length > 2)
 					_views.splice(1, _views.length - 2);
 				
 				// Poping top view to have nice transition
-				topView = popView(transition);
+				topView = vn_internal::popView(transition);
 			}
 			return topView;
 		}
 		
 		public function popAll(transition:String = "slide"):DisplayObject
 		{
-			// Removing views except the top one
-			_views.splice(0, _views.length - 1);
-			
-			// Poping top view to have nice transition
-			return popView(transition);
+			var poppedView:DisplayObject;		
+			if (_parent.dispatchEvent(new ViewNavigatorEvent(ViewNavigatorEvent.VIEW_CHANGING, ViewNavigatorAction.POP_ALL, currentView, null)))
+			{
+				// Removing views except the top one
+				_views.splice(0, _views.length - 1);
+				// Poping top view to have nice transition
+				poppedView = vn_internal::popView(transition);
+			}
+			return poppedView;
 		}
 		
 		public function replaceView(view:Object, viewProps:Object = null, context:Object = null, transition:String = "slide"):DisplayObject
 		{
-			// Pushing view on top of the stack
-			var dispObj:DisplayObject = pushView(view, viewProps, context, transition);
-			
-			// Removing view below
-			if (_views.length > 1)
-				_views.splice(_views.length - 2, 1);
-			
+			var pushedView:DisplayObject;
+			if (_parent.dispatchEvent(new ViewNavigatorEvent(ViewNavigatorEvent.VIEW_CHANGING, ViewNavigatorAction.REPLACE, currentView, view)))
+			{
+				// Pushing view on top of the stack
+				pushedView = vn_internal::pushView(view, viewProps, context, transition);
+				
+				// Removing view below
+				if (_views.length > 1)
+					_views.splice(_views.length - 2, 1);
+			}
 			// Returning pushed view
-			return dispObj;
+			return pushedView;
 		}
 		
 		public function get poppedViewReturnedObject():Object

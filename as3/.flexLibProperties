@@ -7,6 +7,8 @@
     <classEntry path="com.riaspace.as3viewnavigator.IViewNavigator"/>
     <classEntry path="com.riaspace.as3viewnavigator.ViewNavigatorBase"/>
     <classEntry path="com.riaspace.as3viewnavigator.ViewReference"/>
+    <classEntry path="com.riaspace.as3viewnavigator.events.ViewNavigatorEvent"/>
+    <classEntry path="com.riaspace.as3viewnavigator.ViewNavigatorAction"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

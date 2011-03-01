@@ -16,26 +16,32 @@
 //	
 //////////////////////////////////////////////////////////////////////////////////////
 
-package com.riaspace.as3viewnavigator
+package com.riaspace.as3viewnavigator.events
 {
-	import flash.display.DisplayObject;
+	import flash.events.Event;
 	
-	internal class ViewReference
+	public class ViewNavigatorEvent extends Event
 	{
-		public var instance:DisplayObject;
+		public static const VIEW_CHANGING:String = "viewChanging";
+
+		public var action:String;
 		
-		public var viewProps:Object;
+		public var currentView:Object;
 		
-		public var context:Object;
+		public var targetView:Object;
 		
-		public var viewClass:Class;
-		
-		public function ViewReference(view:DisplayObject, viewProps:Object, context:Object)
+		public function ViewNavigatorEvent(type:String, action:String, currentView:Object, targetView:Object, bubbles:Boolean=false, cancelable:Boolean=true)
 		{
-			this.instance = view;
-			this.viewProps = viewProps;
-			this.context = context;
-			this.viewClass = Object(view).constructor;
+			super(type, bubbles, cancelable);
+			
+			this.action = action;
+			this.currentView = currentView;
+			this.targetView = targetView;
+		}
+		
+		override public function clone():Event
+		{
+			return new ViewNavigatorEvent(type, action, currentView, targetView, bubbles, cancelable);
 		}
 	}
 }

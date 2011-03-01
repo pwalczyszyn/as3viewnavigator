@@ -18,17 +18,30 @@
 
 package com.riaspace.as3viewnavigator
 {
-	
 	import flash.display.DisplayObject;
 	import flash.geom.Rectangle;
 	
 	import mx.core.UIComponent;
 	import mx.events.ResizeEvent;
 	
+	/**
+	 * Dispatched when changing the current view.
+	 */
+	[Event(name="viewChanging", type="com.riaspace.as3viewnavigator.events.ViewNavigatorEvent")]
+
+	/**
+	 * This is a wrapper class for ViewNavigatorBase. It is a monkey patch version of
+	 * ViewNavigator from as3viewnavigator library and it can be used with Flex projects.
+	 * 
+	 * @author Piotr Walczyszyn
+	 */
 	public class ViewNavigator extends UIComponent implements IViewNavigator
 	{
 		protected var _base:ViewNavigatorBase;
 		
+		/**
+		 * Default constructor.
+		 */
 		public function ViewNavigator()
 		{
 			super();
@@ -48,9 +61,11 @@ package com.riaspace.as3viewnavigator
 			_base.resizeActiveView();
 		}
 		
-		////////////////////////////////////////////////////////////////////////////
+		//--------------------------------------------------------------------------
+		//
 		// IViewNavigator functions implementation
-		////////////////////////////////////////////////////////////////////////////
+		//
+		//--------------------------------------------------------------------------
 		
 		/**
 		 * @inheritDoc
@@ -73,7 +88,7 @@ package com.riaspace.as3viewnavigator
 		 */
 		public function popView(transition:String="slide"):DisplayObject
 		{
-			return _base.popView(transition);
+			return _base.public::popView(transition);
 		}
 		
 		/**
@@ -81,7 +96,7 @@ package com.riaspace.as3viewnavigator
 		 */
 		public function pushView(view:Object, viewProps:Object=null, context:Object=null, transition:String="slide"):DisplayObject
 		{
-			return _base.pushView(view, viewProps, context, transition);
+			return _base.public::pushView(view, viewProps, context, transition);
 		}
 		
 		/**
@@ -165,6 +180,14 @@ package com.riaspace.as3viewnavigator
 		public function set transitionDuration(value:Number):void
 		{
 			_base.transitionDuration = value;
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function get length():Number
+		{
+			return _base.length;
 		}
 	}
 }
