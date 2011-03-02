@@ -12,6 +12,7 @@
     <classEntry path="com.riaspace.as3viewnavigator.ViewDestructionPolicy"/>
     <classEntry path="com.riaspace.as3viewnavigator.IViewTransition"/>
     <classEntry path="com.riaspace.as3viewnavigator.transitions.ViewSlideTransition"/>
+    <classEntry path="com.riaspace.as3viewnavigator.View"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>
