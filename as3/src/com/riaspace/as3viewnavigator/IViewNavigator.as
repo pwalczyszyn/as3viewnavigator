@@ -155,6 +155,16 @@ package com.riaspace.as3viewnavigator
 		function set transitionDuration(value:Number):void;
 
 		/**
+		 * Returns default transition.
+		 */
+		function get defaultTransition():IViewTransition;
+		
+		/**
+		 * Sets default transition.
+		 */ 
+		function set defaultTransition(value:IViewTransition):void;
+		
+		/**
 		 * Returns number of views managed by ViewNavigator container.
 		 */
 		function get length():Number;		

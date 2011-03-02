@@ -185,6 +185,22 @@ package com.riaspace.as3viewnavigator
 		/**
 		 * @inheritDoc
 		 */
+		public function get defaultTransition():IViewTransition
+		{
+			return _base.defaultTransition;
+		}
+		
+		/**
+		 * @inheritDoc
+		 */ 
+		public function set defaultTransition(value:IViewTransition):void
+		{
+			_base.defaultTransition = value;
+		}
+
+		/**
+		 * @inheritDoc
+		 */
 		public function get length():Number
 		{
 			return _base.length;
