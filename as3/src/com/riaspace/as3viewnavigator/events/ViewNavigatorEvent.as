@@ -18,6 +18,7 @@
 
 package com.riaspace.as3viewnavigator.events
 {
+	import flash.display.DisplayObject;
 	import flash.events.Event;
 	
 	public class ViewNavigatorEvent extends Event
@@ -26,22 +27,22 @@ package com.riaspace.as3viewnavigator.events
 
 		public var action:String;
 		
-		public var currentView:Object;
+		public var oldView:DisplayObject;
 		
-		public var targetView:Object;
+		public var newView:DisplayObject;
 		
-		public function ViewNavigatorEvent(type:String, action:String, currentView:Object, targetView:Object, bubbles:Boolean=false, cancelable:Boolean=true)
+		public function ViewNavigatorEvent(type:String, action:String, oldView:DisplayObject, newView:DisplayObject, bubbles:Boolean=false, cancelable:Boolean=true)
 		{
 			super(type, bubbles, cancelable);
 			
 			this.action = action;
-			this.currentView = currentView;
-			this.targetView = targetView;
+			this.oldView = oldView;
+			this.newView = newView;
 		}
 		
 		override public function clone():Event
 		{
-			return new ViewNavigatorEvent(type, action, currentView, targetView, bubbles, cancelable);
+			return new ViewNavigatorEvent(type, action, oldView, newView, bubbles, cancelable);
 		}
 	}
 }

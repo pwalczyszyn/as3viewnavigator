@@ -9,6 +9,9 @@
     <classEntry path="com.riaspace.as3viewnavigator.ViewReference"/>
     <classEntry path="com.riaspace.as3viewnavigator.events.ViewNavigatorEvent"/>
     <classEntry path="com.riaspace.as3viewnavigator.ViewNavigatorAction"/>
+    <classEntry path="com.riaspace.as3viewnavigator.ViewDestructionPolicy"/>
+    <classEntry path="com.riaspace.as3viewnavigator.IViewTransition"/>
+    <classEntry path="com.riaspace.as3viewnavigator.transitions.ViewSlideTransition"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

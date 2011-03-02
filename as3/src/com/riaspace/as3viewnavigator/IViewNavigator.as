@@ -35,38 +35,38 @@ package com.riaspace.as3viewnavigator
 		 * view is passed as Class.
 		 * @param context - object that can be passed to the view if it implements IView. It also will be returned
 		 * by ViewNavigator's poppedViewContext property no matter if the view implements IView or not.
-		 * @param transition - enum value from <code>ViewTransition</code> class. By default it is set to <code>ViewTransition.SLIDE</code>.
+		 * @param transition - views transition, default is slide transition.
 		 * 
 		 * @return Returns pushed view.
 		 */
-		function pushView(view:Object, viewProps:Object = null, context:Object = null, transition:String = "slide"):DisplayObject;
+		function pushView(view:Object, viewProps:Object = null, context:Object = null, transition:IViewTransition = null):DisplayObject;
 
 		/**
 		 * Pops current view from the top of the stack.
 		 * 
-		 * @param transition - enum value from <code>ViewTransition</code> class. By default it is set to <code>ViewTransition.SLIDE</code>.
+		 * @param transition - views transition, default is slide transition.
 		 *  
 		 * @return Returns the view that was on top of the stack. 
 		 */
-		function popView(transition:String = "slide"):DisplayObject;
+		function popView(transition:IViewTransition = null):DisplayObject;
 
 		/**
 		 * Pops to the first view from the very top.
 		 * 
-		 * @param transition - enum value from <code>ViewTransition</code> class. By default it is set to <code>ViewTransition.SLIDE</code>.
+		 * @param transition - views transition, default is slide transition.
 		 *  
 		 * @return Returns the view that was on top of the stack.
 		 */
-		function popToFirstView(transition:String = "slide"):DisplayObject;
+		function popToFirstView(transition:IViewTransition = null):DisplayObject;
 
 		/**
 		 * Pops all views from the stack.
 		 * 
-		 * @param transition - enum value from <code>ViewTransition</code> class. By default it is set to <code>ViewTransition.SLIDE</code>.
+		 * @param transition - views transition, default is slide transition.
 		 *  
 		 * @return Returns the view that was on top of the stack.
 		 */
-		function popAll(transition:String = "slide"):DisplayObject;
+		function popAll(transition:IViewTransition = null):DisplayObject;
 
 		/**
 		 * Replaces view with the one passed as parameter.
@@ -76,11 +76,11 @@ package com.riaspace.as3viewnavigator
 		 * view is passed as Class.
 		 * @param context - object that can be passed to the view if it implements IView. It also will be returned
 		 * by ViewNavigator's poppedViewContext property no matter if the view implements IView or not.
-		 * @param transition - enum value from <code>ViewTransition</code> class. By default it is set to <code>ViewTransition.SLIDE</code>.
+		 * @param transition - views transition, default is slide transition.
 		 *  
 		 * @return Returns the view that was on top of the stack.
 		 */
-		function replaceView(view:Object, viewProps:Object = null, context:Object = null, transition:String = "slide"):DisplayObject;
+		function replaceView(view:Object, viewProps:Object = null, context:Object = null, transition:IViewTransition = null):DisplayObject;
 		
 		/**
 		 * Returns width of navigator container.
@@ -138,12 +138,12 @@ package com.riaspace.as3viewnavigator
 		/**
 		 * Returns first view transition.
 		 */
-		function get firstViewTransition():String;
+		function get firstViewTransition():IViewTransition;
 		/**
 		 * Sets first view transition.
 		 * @param value - first view transition
 		 */
-		function set firstViewTransition(value:String):void;
+		function set firstViewTransition(value:IViewTransition):void;
 		
 		/**
 		 * Views transition duration, default value is 0.5s.

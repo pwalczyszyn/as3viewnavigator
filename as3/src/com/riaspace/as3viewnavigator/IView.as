@@ -47,5 +47,17 @@ package com.riaspace.as3viewnavigator
 		 * Returns view return object.
 		 */
 		function get viewReturnObject():Object;
+		
+		/**
+		 * Returns view destruction policy, possible values auto and never.
+		 * @see ViewDestructionPolicy
+		 */
+		function get destructionPolicy():String;
+		
+		/**
+		 * Sets view destruction policy, possible values auto and never.
+		 * @see ViewDestructionPolicy
+		 */
+		function set destructionPolicy(value:String):void;
 	}
 }

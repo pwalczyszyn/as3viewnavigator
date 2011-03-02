@@ -22,20 +22,84 @@ package com.riaspace.as3viewnavigator
 	
 	internal class ViewReference
 	{
-		public var instance:DisplayObject;
+		private var _navigator:IViewNavigator;
 		
-		public var viewProps:Object;
+		private var _instance:DisplayObject;
 		
-		public var context:Object;
+		private var _viewProps:Object;
 		
-		public var viewClass:Class;
+		private var _context:Object;
 		
-		public function ViewReference(view:DisplayObject, viewProps:Object, context:Object)
+		private var _viewClass:Class;
+		
+		public function ViewReference(navigator:IViewNavigator, view:Object, viewProps:Object, context:Object)
 		{
-			this.instance = view;
-			this.viewProps = viewProps;
-			this.context = context;
-			this.viewClass = Object(view).constructor;
+			_navigator = navigator;
+			_viewProps = viewProps;
+			_context = context;
+			
+			if (view is Class)
+			{
+				_viewClass = Class(view);
+				_instance = create();
+			}
+			else
+			{
+				_viewClass = Object(view).constructor;
+				_instance = DisplayObject(view);
+			}
+		}
+		
+		private function create():DisplayObject
+		{
+			var result:DisplayObject = new _viewClass();
+			
+			// if pushed view is an IView setting navigator reference
+			if (result is IView)
+			{
+				IView(result).navigator = _navigator;
+				IView(result).context = context;
+				
+				IView(result).resize();
+			}
+			
+			// Setting view properties
+			for(var prop:String in viewProps)
+				if (result.hasOwnProperty(prop))
+					result[prop] = viewProps[prop];
+			
+			return result;
+		}
+
+		public function destroyInstance():void
+		{
+			if (_instance && _instance is IView)
+				IView(_instance).navigator = null;
+			
+			_instance = null;
+		}
+		
+		public function get instance():DisplayObject
+		{
+			if (_instance)
+				return _instance;
+			else
+				return _instance = create();
+		}
+
+		public function get viewProps():Object
+		{
+			return _viewProps;
+		}
+
+		public function get viewClass():Class
+		{
+			return _viewClass;
+		}
+
+		public function get context():Object
+		{
+			return _context;
 		}
 	}
 }

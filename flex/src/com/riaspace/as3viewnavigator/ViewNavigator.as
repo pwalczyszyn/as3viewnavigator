@@ -70,7 +70,7 @@ package com.riaspace.as3viewnavigator
 		/**
 		 * @inheritDoc
 		 */
-		public function popAll(transition:String="slide"):DisplayObject
+		public function popAll(transition:IViewTransition = null):DisplayObject
 		{
 			return _base.popAll(transition);
 		}
@@ -78,7 +78,7 @@ package com.riaspace.as3viewnavigator
 		/**
 		 * @inheritDoc
 		 */
-		public function popToFirstView(transition:String="slide"):DisplayObject
+		public function popToFirstView(transition:IViewTransition = null):DisplayObject
 		{
 			return _base.popToFirstView(transition);
 		}
@@ -86,7 +86,7 @@ package com.riaspace.as3viewnavigator
 		/**
 		 * @inheritDoc
 		 */
-		public function popView(transition:String="slide"):DisplayObject
+		public function popView(transition:IViewTransition = null):DisplayObject
 		{
 			return _base.public::popView(transition);
 		}
@@ -94,7 +94,7 @@ package com.riaspace.as3viewnavigator
 		/**
 		 * @inheritDoc
 		 */
-		public function pushView(view:Object, viewProps:Object=null, context:Object=null, transition:String="slide"):DisplayObject
+		public function pushView(view:Object, viewProps:Object=null, context:Object=null, transition:IViewTransition = null):DisplayObject
 		{
 			return _base.public::pushView(view, viewProps, context, transition);
 		}
@@ -102,7 +102,7 @@ package com.riaspace.as3viewnavigator
 		/**
 		 * @inheritDoc
 		 */
-		public function replaceView(view:Object, viewProps:Object=null, context:Object=null, transition:String="slide"):DisplayObject
+		public function replaceView(view:Object, viewProps:Object=null, context:Object=null, transition:IViewTransition = null):DisplayObject
 		{
 			return _base.replaceView(view, viewProps, context, transition);
 		}
@@ -155,14 +155,14 @@ package com.riaspace.as3viewnavigator
 		/**
 		 * @inheritDoc
 		 */
-		public function get firstViewTransition():String
+		public function get firstViewTransition():IViewTransition
 		{
 			return _base.firstViewTransition;
 		}
 		/**
 		 * @inheritDoc
 		 */
-		public function set firstViewTransition(value:String):void
+		public function set firstViewTransition(value:IViewTransition):void
 		{
 			_base.firstViewTransition = value;
 		}
@@ -180,7 +180,7 @@ package com.riaspace.as3viewnavigator
 		public function set transitionDuration(value:Number):void
 		{
 			_base.transitionDuration = value;
-		}
+		}	
 		
 		/**
 		 * @inheritDoc

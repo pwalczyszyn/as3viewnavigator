@@ -51,9 +51,9 @@ package com.riaspace.as3viewnavigator
 		 * view is passed as Class.
 		 * @param firstViewContext - object that can be passed to the view if it implements IView. It also will be returned
 		 * by ViewNavigator's poppedViewContext property no matter if the view implements IView or not.
-		 * @param firstViewTransition - enum value from <code>ViewTransition</code> class. Constructor by default has it is set to <code>ViewTransition.NONE</code>.
+		 * @param firstViewTransition - views transition, the default for first view is  none transition.
 		 */
-		public function ViewNavigator(firstView:Object = null, firstViewProps:Object = null, firstViewContext:Object = null, firstViewTransition:String = "none")
+		public function ViewNavigator(firstView:Object = null, firstViewProps:Object = null, firstViewContext:Object = null, firstViewTransition:IViewTransition = null)
 		{
 			addEventListener(Event.ADDED_TO_STAGE, this_addedToStageHandler);
 			
@@ -167,7 +167,7 @@ package com.riaspace.as3viewnavigator
 		/**
 		 * @inheritDoc
 		 */
-		public function popAll(transition:String="slide"):DisplayObject
+		public function popAll(transition:IViewTransition = null):DisplayObject
 		{
 			return _base.popAll(transition);
 		}
@@ -175,7 +175,7 @@ package com.riaspace.as3viewnavigator
 		/**
 		 * @inheritDoc
 		 */
-		public function popToFirstView(transition:String="slide"):DisplayObject
+		public function popToFirstView(transition:IViewTransition = null):DisplayObject
 		{
 			return _base.popToFirstView(transition);
 		}
@@ -183,7 +183,7 @@ package com.riaspace.as3viewnavigator
 		/**
 		 * @inheritDoc
 		 */
-		public function popView(transition:String="slide"):DisplayObject
+		public function popView(transition:IViewTransition = null):DisplayObject
 		{
 			return _base.public::popView(transition);
 		}
@@ -191,7 +191,7 @@ package com.riaspace.as3viewnavigator
 		/**
 		 * @inheritDoc
 		 */
-		public function pushView(view:Object, viewProps:Object=null, context:Object=null, transition:String="slide"):DisplayObject
+		public function pushView(view:Object, viewProps:Object=null, context:Object=null, transition:IViewTransition = null):DisplayObject
 		{
 			return _base.public::pushView(view, viewProps, context, transition);
 		}
@@ -199,7 +199,7 @@ package com.riaspace.as3viewnavigator
 		/**
 		 * @inheritDoc
 		 */
-		public function replaceView(view:Object, viewProps:Object=null, context:Object=null, transition:String="slide"):DisplayObject
+		public function replaceView(view:Object, viewProps:Object=null, context:Object=null, transition:IViewTransition = null):DisplayObject
 		{
 			return _base.replaceView(view, viewProps, context, transition);
 		}
@@ -252,14 +252,14 @@ package com.riaspace.as3viewnavigator
 		/**
 		 * @inheritDoc
 		 */
-		public function get firstViewTransition():String
+		public function get firstViewTransition():IViewTransition
 		{
 			return _base.firstViewTransition;
 		}
 		/**
 		 * @inheritDoc
 		 */
-		public function set firstViewTransition(value:String):void
+		public function set firstViewTransition(value:IViewTransition):void
 		{
 			_base.firstViewTransition = value;
 		}

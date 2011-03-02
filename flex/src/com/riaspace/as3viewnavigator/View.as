@@ -34,6 +34,8 @@ package com.riaspace.as3viewnavigator
 		
 		private var _viewReturnObject:Object;
 		
+		private var _destructionPolicy:String = ViewDestructionPolicy.AUTO;
+		
 		/**
 		 * Default constructor.
 		 */
@@ -95,6 +97,22 @@ package com.riaspace.as3viewnavigator
 		protected function set viewReturnObject(value:Object):void
 		{
 			_viewReturnObject = value;
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function get destructionPolicy():String
+		{
+			return _destructionPolicy;
+		}
+		
+		/**
+		 * @inheritDoc
+		 */
+		public function set destructionPolicy(value:String):void
+		{
+			_destructionPolicy = value;
 		}
 	}
 }
