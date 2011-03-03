@@ -28,12 +28,6 @@ package com.riaspace.as3viewnavigator.transitions
 	{
 		private var _navigator:IViewNavigator;
 		
-		private var _action:String;
-		
-		private var _hideView:DisplayObject;
-		
-		private var _showView:DisplayObject;
-		
 		private var _transitionDuration:Number;
 		
 		public function ViewNoneTransition(navigator:IViewNavigator)
@@ -41,20 +35,17 @@ package com.riaspace.as3viewnavigator.transitions
 			_navigator = navigator;
 		}
 		
-		public function play():void
+		public function play(hideView:DisplayObject, showView:DisplayObject, action:String):void
 		{
-			var hv:DisplayObject = _hideView;
-			var sv:DisplayObject = _showView;
-
-			if (hv)
+			if (hideView)
 			{
-				Sprite(_navigator).removeChild(hv);
+				Sprite(_navigator).removeChild(hideView);
 			}
 			
-			if (sv)
+			if (showView)
 			{
-				sv.x = 0;
-				Sprite(_navigator).addChild(sv);
+				showView.x = 0;
+				Sprite(_navigator).addChild(showView);
 			}
 		}
 		
@@ -67,31 +58,5 @@ package com.riaspace.as3viewnavigator.transitions
 		{
 			_transitionDuration = value;
 		}
-		
-		public function get transitionDuration():Number
-		{
-			return _transitionDuration;
-		}
-
-		public function set action(value:String):void
-		{
-			_action = value;
-		}
-		
-		public function set hideView(value:DisplayObject):void
-		{
-			_hideView = value;
-		}
-		
-		public function set showView(value:DisplayObject):void
-		{
-			_showView = value;
-		}
-
-		public function get navigator():IViewNavigator
-		{
-			return _navigator;
-		}
-
 	}
 }

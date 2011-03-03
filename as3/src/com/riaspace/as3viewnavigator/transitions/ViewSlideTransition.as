@@ -31,12 +31,6 @@ package com.riaspace.as3viewnavigator.transitions
 	{
 		private var _navigator:IViewNavigator;
 		
-		private var _action:String;
-		
-		private var _hideView:DisplayObject;
-		
-		private var _showView:DisplayObject;
-		
 		private var _transitionDuration:Number = 0.7;
 		
 		public function ViewSlideTransition(navigator:IViewNavigator)
@@ -44,33 +38,27 @@ package com.riaspace.as3viewnavigator.transitions
 			_navigator = navigator;
 		}
 		
-		public function play():void
+		public function play(hideView:DisplayObject, showView:DisplayObject, action:String):void
 		{
-			// Setting variables with function scope
-			// in case next transition starts before 
-			// current is over
-			var hv:DisplayObject = _hideView;
-			var sv:DisplayObject = _showView;
-			
 			// Tweening hideView
-			if (hv)
+			if (hideView)
 			{
-				Tweener.addTween(hv, 
+				Tweener.addTween(hideView, 
 					{
-						x : _action == ViewNavigatorAction.PUSH ? -_navigator.width : _navigator.width, 
+						x : action == ViewNavigatorAction.PUSH ? -_navigator.width : _navigator.width, 
 						time : _transitionDuration,
-						onComplete : function():void { Sprite(_navigator).removeChild(hv); }
+						onComplete : function():void { Sprite(_navigator).removeChild(hideView); }
 					});
 			}
 			
 			// Tweening showView
-			if (sv)
+			if (showView)
 			{
-				sv.x = _action == ViewNavigatorAction.PUSH ? _navigator.width : -_navigator.width;
-				sv.y = 0;
-				Sprite(_navigator).addChild(sv);
+				showView.x = action == ViewNavigatorAction.PUSH ? _navigator.width : -_navigator.width;
+				showView.y = 0;
+				Sprite(_navigator).addChild(showView);
 				
-				Tweener.addTween(sv, {x : 0, time : _transitionDuration});
+				Tweener.addTween(showView, {x : 0, time : _transitionDuration});
 			}
 		}
 		
@@ -82,31 +70,6 @@ package com.riaspace.as3viewnavigator.transitions
 		public function set transitionDuration(value:Number):void
 		{
 			_transitionDuration = value;
-		}
-		
-		public function get transitionDuration():Number
-		{
-			return _transitionDuration;
-		}
-
-		public function set action(value:String):void
-		{
-			_action = value;
-		}
-		
-		public function set hideView(value:DisplayObject):void
-		{
-			_hideView = value;
-		}
-		
-		public function set showView(value:DisplayObject):void
-		{
-			_showView = value;
-		}
-
-		public function get navigator():IViewNavigator
-		{
-			return _navigator;
 		}
 	}
 }

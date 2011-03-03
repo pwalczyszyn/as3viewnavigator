@@ -8,12 +8,6 @@ package com.riaspace.as3viewnavigator
 		
 		function set transitionDuration(value:Number):void;
 		
-		function set action(value:String):void;
-		
-		function set hideView(value:DisplayObject):void;
-		
-		function set showView(value:DisplayObject):void;
-		
-		function play():void;
+		function play(hideView:DisplayObject, showView:DisplayObject, action:String):void;
 	}
 }

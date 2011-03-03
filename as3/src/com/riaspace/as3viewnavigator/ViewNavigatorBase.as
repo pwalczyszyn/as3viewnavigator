@@ -252,10 +252,7 @@ package com.riaspace.as3viewnavigator
 		
 		protected function applyTransition(transition:IViewTransition, hideView:DisplayObject, showView:DisplayObject, action:String):void
 		{
-			transition.hideView = hideView;
-			transition.showView = showView;
-			transition.action = action;
-			transition.play();
+			transition.play(hideView, showView, action);
 		}
 		
 		public function get poppedViewReturnedObject():Object
@@ -342,6 +339,5 @@ package com.riaspace.as3viewnavigator
 		{
 			_defaultTransition = value;
 		}
-
 	}
 }

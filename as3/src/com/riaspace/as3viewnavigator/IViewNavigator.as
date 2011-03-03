@@ -19,8 +19,14 @@
 package com.riaspace.as3viewnavigator
 {
 	import flash.display.DisplayObject;
+	import flash.events.IEventDispatcher;
 
-	public interface IViewNavigator
+	/**
+	 * Dispatched when changing the current view.
+	 */
+	[Event(name="viewChanging", type="com.riaspace.as3viewnavigator.events.ViewNavigatorEvent")]
+
+	public interface IViewNavigator extends IEventDispatcher
 	{
 		/**
 		 * Adds view on top of the stack. 
