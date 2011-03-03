@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<design>
+	<namespaces>
+		<namespace prefix="vn" uri="http://ns.riaspace.com/as3viewnavigator" />
+	</namespaces>
+
+	<categories>
+		<category id="riaspace" label="Riaspace Components" defaultExpand="true" />
+	</categories>
+
+	<components>
+		<component name="ViewNavigator" namespace="vn" category="riaspace" insertStyle="control" />
+	</components>
+</design>
